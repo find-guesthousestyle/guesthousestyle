@@ -34,7 +34,8 @@ export interface QuizQuestion {
   /** 결과의 '추천 이유' 문장에 쓰이는 짧은 맥락 */
   context: string;
   q: string;
-  /** 질문과 선택지 사이 그림 (public/ 기준) — 왼쪽 칸이 A, 오른쪽 칸이 B. 아직 없으면 비워 둠 */
+  /** 질문과 선택지 사이 그림 (public/ 기준) — 왼쪽 칸이 A, 오른쪽 칸이 B. 아직 없으면 비워 둠
+   *  (그림마다 테두리가 달라 두 칸 모두 같은 크기 · 같은 둥근 테두리로 다시 그려 둠, 1404 × 514) */
   image?: string;
   options: QuizOption[];
 }

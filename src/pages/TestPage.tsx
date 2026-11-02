@@ -133,7 +133,7 @@ export default function TestPage({ sharedCode, mine = false }: { sharedCode: str
               {/* 질문 그림 — 왼쪽 칸이 A, 오른쪽 칸이 B (선택지 글과 같은 내용이라 읽기 도구에는 숨김) */}
               {questions[qi].image && (
                 <div className="test__pic" aria-hidden="true">
-                  <img src={questions[qi].image} alt="" width={1400} height={548} />
+                  <img src={questions[qi].image} alt="" width={1404} height={514} />
                   <span className="test__pickey test__pickey--a">A</span>
                   <span className="test__pickey test__pickey--b">B</span>
                 </div>
