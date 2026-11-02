@@ -114,6 +114,7 @@ export const QUESTIONS: QuizQuestion[] = [
     id: 'q8',
     context: '아침 일찍 나간다면',
     q: '아침 일찍 나간다면?',
+    image: 'quiz/q8.webp',
     options: [
       { key: 'A', tag: '오름일출', text: '오름 올라 일출 보기', types: { adventurer: 2 }, programs: { flower: 3 } },
       { key: 'B', tag: '해안러닝', text: '해안도로 따라 달리기', types: { adventurer: 2 }, programs: { running: 3 } },
