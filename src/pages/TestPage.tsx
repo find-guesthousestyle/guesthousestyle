@@ -98,6 +98,11 @@ export default function TestPage({ sharedCode, mine = false }: { sharedCode: str
 
   const result = step === 'result' && answers.every(Boolean) ? scoreQuiz(answers as AnswerKey[]) : null;
   const qi = typeof step === 'number' ? step : -1;
+  // 다음 질문 그림을 미리 불러 둠 — 답을 고르자마자 넘어갈 때 그림이 늦게 뜨지 않게
+  const nextImage = qi >= 0 ? questions[qi + 1]?.image : undefined;
+  useEffect(() => {
+    if (nextImage) new Image().src = nextImage;
+  }, [nextImage]);
 
   return (
     <section className="test" data-tone="light" aria-labelledby="test-title">
@@ -124,6 +129,15 @@ export default function TestPage({ sharedCode, mine = false }: { sharedCode: str
               <h1 id="test-title" ref={focusRef} tabIndex={-1} className="test__q">
                 {questions[qi].q}
               </h1>
+
+              {/* 질문 그림 — 왼쪽 칸이 A, 오른쪽 칸이 B (선택지 글과 같은 내용이라 읽기 도구에는 숨김) */}
+              {questions[qi].image && (
+                <div className="test__pic" aria-hidden="true">
+                  <img src={questions[qi].image} alt="" width={1400} height={548} />
+                  <span className="test__pickey test__pickey--a">A</span>
+                  <span className="test__pickey test__pickey--b">B</span>
+                </div>
+              )}
 
               <div className="test__options" role="radiogroup" aria-labelledby="test-title">
                 {questions[qi].options.map((o) => {
