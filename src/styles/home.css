@@ -10,7 +10,7 @@
   --cream: #F6F3ED;
   --mono: var(--f-sans);
   --p: 0;
-  position: relative; height: 260vh; /* 스크롤 단계(HomePage.tsx stepAt) — 문제 정의 1.41화면 + 머무는 0.2화면 + 고정 무대 한 화면 */
+  position: relative; height: 320vh; /* 스크롤 단계(HomePage.tsx stepAt · spreadAt) — 문제 정의 1.41화면 + 사진 펼침 0.6화면 + 머무는 0.2화면 + 고정 무대 한 화면 */
   background: var(--night); color: var(--cream);
 }
 .intro__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
@@ -170,6 +170,14 @@
 .strip { margin-inline: calc(50% - 50vw); height: clamp(130px, 31vh, 340px); padding-block: 10px; overflow: hidden; } /* 위아래 여백 — 기운 모서리가 잘리지 않게 */
 .strip__track { display: flex; align-items: center; width: max-content; height: 100%; animation: strip-flow 16s linear infinite; } /* 천천히 흘러감 */
 .strip__item { flex: none; aspect-ratio: 3 / 4; margin-left: clamp(-22px, -1.5vw, -10px); overflow: hidden; background: #F1E3D8; box-shadow: 0 2px 8px rgba(40, 30, 20, .1); opacity: .92; transform: translateY(var(--y, 0)) rotate(var(--r, 0deg)); } /* 살짝 비치게 — 겹친 사진이 은은하게 */
+/* 스크롤로 펼치기 — --spread 0 이면 화면 가운데(--dx 만큼 이동)에 기울어진 채(--pr) 겹쳐 있고, 1 이면 원래 줄
+   (--spread 는 인트로가 스크롤에 맞춰 넣음 · 값이 없으면 1 = 동작 줄이기 설정에서는 처음부터 펼친 모습) */
+.intro .strip__item {
+  transform:
+    translate(calc(var(--dx, 0px) * (1 - var(--spread, 1))), calc(var(--y, 0%) * var(--spread, 1)))
+    rotate(calc(var(--r, 0deg) * var(--spread, 1) + var(--pr, 0deg) * (1 - var(--spread, 1))))
+    scale(calc(.9 + .1 * var(--spread, 1)));
+}
 .strip__item:nth-child(odd) { z-index: 1; }
 .strip__item img { display: block; width: 100%; height: 100%; object-fit: cover; }
 @keyframes strip-flow { to { transform: translateX(-50%); } }

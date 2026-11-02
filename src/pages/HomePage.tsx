@@ -63,19 +63,42 @@ const REVEAL = SITE_KO.intro.words.length + 3;
  * 스크롤한 화면 수(s)마다 한 단계씩 — 첫 단어 0.15화면, 단어 사이 0.22화면,
  * 마지막 단어 0.25화면 뒤 전환 문구, 다시 0.35화면 뒤 문제 정의. 위로 올리면 거꾸로 돌아갑니다.
  * (예전에는 시간에 맞춰 저절로 진행하며 그동안 스크롤을 막았는데, 여기서 이탈이 많아 스크롤로 바꿈)
- * 단어 4개 기준 문제 정의는 1.41화면 — 섹션 높이(home.css .intro, 260vh)가 여기에 맞춰져 있습니다.
+ * 문제 정의가 열리면 가운데 한 무더기로 겹쳐 있던 사진이 0.1화면 뒤부터 0.5화면에 걸쳐 양옆으로 펼쳐지고(spreadAt),
+ * 다 펼쳐지면 사진 띠가 흐르기 시작합니다.
+ * 단어 4개 기준 문제 정의 1.41화면 + 펼침 0.6화면 — 섹션 높이(home.css .intro, 320vh)가 여기에 맞춰져 있습니다.
  */
 const WORD_AT = 0.15;
 const WORD_GAP = 0.22;
 const TURN_GAP = 0.25;
 const REVEAL_GAP = 0.35;
+const SPREAD_DELAY = 0.1;
+const SPREAD_LEN = 0.5;
+const revealAt = (total: number) => WORD_AT + (total - 1) * WORD_GAP + TURN_GAP + REVEAL_GAP;
 function stepAt(s: number, total: number) {
-  const lastWord = WORD_AT + (total - 1) * WORD_GAP;
-  const turnAt = lastWord + TURN_GAP;
+  const turnAt = revealAt(total) - REVEAL_GAP;
   if (s >= turnAt + REVEAL_GAP) return REVEAL;
   // total + 1(시야가 좁아짐) 단계는 건너뜁니다
   if (s >= turnAt) return total + 2;
   return s < WORD_AT ? 0 : Math.min(total, Math.floor((s - WORD_AT) / WORD_GAP) + 1);
+}
+/** 0 = 가운데 한 무더기, 1 = 다 펼쳐짐 */
+function spreadAt(s: number, total: number) {
+  const t = (s - revealAt(total) - SPREAD_DELAY) / SPREAD_LEN;
+  return Math.min(1, Math.max(0, t));
+}
+/**
+ * 무더기로 모을 때 사진마다 화면 가운데까지의 거리(--dx)를 잽니다.
+ * 흐르던 띠가 멈춘 그 자리 기준이라, 위로 올려 다시 모아도 띠가 튀지 않습니다.
+ */
+function measurePile(track: HTMLElement) {
+  const left = track.getBoundingClientRect().left;
+  const mid = window.innerWidth / 2;
+  for (const item of track.children as HTMLCollectionOf<HTMLElement>) {
+    // 띠가 움직이는(transform 이 걸린) 동안에는 띠 자체가 offsetParent 라 offsetLeft 가 띠 기준
+    const inTrack = item.offsetParent === track ? item.offsetLeft : item.offsetLeft - track.offsetLeft;
+    const x = left + inTrack + item.offsetWidth / 2;
+    item.style.setProperty('--dx', `${(mid - x).toFixed(1)}px`);
+  }
 }
 function Intro() {
   const { site: SITE, ui } = useContent();
@@ -88,6 +111,8 @@ function Intro() {
   useEffect(() => {
     if (reduced) return;
     let raf = 0;
+    // 사진 무더기 위치를 잰 상태인지 — 다 펼쳐지면(띠가 다시 흐르면) 다음에 모을 때 새로 잽니다
+    let piled = false;
     const update = () => {
       raf = 0;
       const el = ref.current;
@@ -95,17 +120,35 @@ function Intro() {
       const range = el.offsetHeight - window.innerHeight;
       const p = range > 0 ? Math.min(1, Math.max(0, -el.getBoundingClientRect().top / range)) : 1;
       el.style.setProperty('--p', p.toFixed(3));
-      setStep(stepAt(p * range / window.innerHeight, total));
+      const s = p * range / window.innerHeight;
+      setStep(stepAt(s, total));
+      const spread = spreadAt(s, total);
+      const track = el.querySelector<HTMLElement>('.strip__track');
+      if (track) {
+        if (spread < 1 && !piled) {
+          track.style.animationPlayState = 'paused';
+          measurePile(track);
+          piled = true;
+        } else if (spread >= 1 && piled) {
+          track.style.animationPlayState = '';
+          piled = false;
+        }
+      }
+      el.style.setProperty('--spread', spread.toFixed(3));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
+    const onResize = () => {
+      piled = false;
+      onScroll();
+    };
     update();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('resize', onResize);
       cancelAnimationFrame(raf);
     };
   }, [reduced, total]);
@@ -286,8 +329,9 @@ function PhotoStrip() {
     <div className="strip" aria-hidden="true">
       <div className="strip__track">
         {[0, 1].map((loop) =>
-          STRIP.map((p) => (
-            <span key={`${loop}-${p.src}`} className="strip__item" style={{ height: `${p.h}%`, '--y': `${p.y}%`, '--r': `${p.r}deg` } as CSSProperties}>
+          STRIP.map((p, i) => (
+            // --pr: 무더기로 겹쳐 있을 때의 기울기 (사진마다 다르게, -11 ~ 11도)
+            <span key={`${loop}-${p.src}`} className="strip__item" style={{ height: `${p.h}%`, '--y': `${p.y}%`, '--r': `${p.r}deg`, '--pr': `${((i + loop) * 37) % 23 - 11}deg` } as CSSProperties}>
               <img src={p.src} alt={loop === 0 ? alt(p.photo) : ''} />
             </span>
           )),
