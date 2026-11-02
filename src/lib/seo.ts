@@ -4,8 +4,8 @@
  * (화면에 보이는 문장 · 디자인은 건드리지 않습니다)
  */
 
-/** 대표 주소 (canonical) — Vercel 게시 주소 */
-export const SITE_URL = 'https://guesthousestyle.vercel.app/';
+/** 대표 주소 (canonical) — 한경 웹진 게시 주소 */
+export const SITE_URL = 'https://lxwebzine.hankyung.com/2026-1/team4/';
 export const SITE_NAME = 'Find Your Guesthouse Style';
 
 export interface PageMeta {

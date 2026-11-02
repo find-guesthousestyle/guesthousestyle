@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 
-const SITE_URL = 'https://guesthousestyle.vercel.app/';
+const SITE_URL = 'https://lxwebzine.hankyung.com/2026-1/team4/';
 
 /**
  * 취향 테스트를 # 이 아닌 따로 된 주소(…/team4/test/)로 — 빌드가 끝나면 index.html 을 test/index.html 로 한 벌 더 둡니다.
