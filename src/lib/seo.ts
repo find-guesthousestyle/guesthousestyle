@@ -5,7 +5,7 @@
  */
 
 /** 대표 주소 (canonical) — GitHub Pages 게시 주소 */
-export const SITE_URL = 'https://seongmin9584.github.io/stay.jejulog/';
+export const SITE_URL = 'https://find-guesthousestyle.github.io/';
 export const SITE_NAME = 'Find Your Guesthouse Style';
 
 export interface PageMeta {
