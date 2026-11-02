@@ -4,8 +4,8 @@
  * (화면에 보이는 문장 · 디자인은 건드리지 않습니다)
  */
 
-/** 대표 주소 (canonical) — GitHub Pages 게시 주소 */
-export const SITE_URL = 'https://find-guesthousestyle.github.io/';
+/** 대표 주소 (canonical) — Vercel 게시 주소 */
+export const SITE_URL = 'https://guesthousestyle.vercel.app/';
 export const SITE_NAME = 'Find Your Guesthouse Style';
 
 export interface PageMeta {
