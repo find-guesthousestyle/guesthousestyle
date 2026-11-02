@@ -60,64 +60,34 @@ export function HomePage() {
  */
 const REVEAL = SITE_KO.intro.words.length + 3;
 /**
- * 이번 방문에서 인트로를 이미 봤는지 — 브라우저에 저장하지 않고 페이지가 열려 있는 동안만 기억합니다.
- * 사이트에 처음 들어왔을 때(새로 열기 · 새로고침)만 재생하고, 상세페이지에 다녀오거나 맨 위로 올라와도 다시 틀지 않습니다.
+ * 스크롤한 화면 수(s)마다 한 단계씩 — 첫 단어 0.15화면, 단어 사이 0.22화면,
+ * 마지막 단어 0.25화면 뒤 전환 문구, 다시 0.35화면 뒤 문제 정의. 위로 올리면 거꾸로 돌아갑니다.
+ * (예전에는 시간에 맞춰 저절로 진행하며 그동안 스크롤을 막았는데, 여기서 이탈이 많아 스크롤로 바꿈)
+ * 단어 4개 기준 문제 정의는 1.41화면 — 섹션 높이(home.css .intro, 260vh)가 여기에 맞춰져 있습니다.
  */
-let introPlayed = false;
+const WORD_AT = 0.15;
+const WORD_GAP = 0.22;
+const TURN_GAP = 0.25;
+const REVEAL_GAP = 0.35;
+function stepAt(s: number, total: number) {
+  const lastWord = WORD_AT + (total - 1) * WORD_GAP;
+  const turnAt = lastWord + TURN_GAP;
+  if (s >= turnAt + REVEAL_GAP) return REVEAL;
+  // total + 1(시야가 좁아짐) 단계는 건너뜁니다
+  if (s >= turnAt) return total + 2;
+  return s < WORD_AT ? 0 : Math.min(total, Math.floor((s - WORD_AT) / WORD_GAP) + 1);
+}
 function Intro() {
   const { site: SITE, ui } = useContent();
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   const total = SITE.intro.words.length;
-  // 스크롤 없이 시간에 맞춰 저절로 — 질문 → 파티 · 술 · 헌팅 → 전환 문구 → 문제 정의
-  // auto: 1 ~ total 은 나온 단어 수, total + 1 은 시야가 좁아짐, total + 2 는 전환 문구, REVEAL 은 문제 정의
-  const seenRef = useRef(introPlayed);
-  const [auto, setAuto] = useState(() => (seenRef.current ? REVEAL : 0));
-  // 자동 진행 중에 먼저 스크롤해 내려가도 바로 문제 정의
-  const [revealByScroll, setRevealByScroll] = useState(false);
-  // 아래로 내려갔다가 맨 위로 돌아오면 질문부터 다시 재생 (run 이 바뀌면 시간을 처음부터 셉니다)
-  const [run, setRun] = useState(0);
-
-  useEffect(() => {
-    if (reduced || seenRef.current) return;
-    // 질문만 1.5초(생각할 시간) → 단어 0.65초 간격 → 1초 뒤 전환 문구 → 3초 뒤 문제 정의
-    // (전환 문구는 두 줄 먼저, 0.85초 뒤 '전부가 아닙니다.' — 마지막 줄도 읽을 시간을 둠)
-    // (예전 '시야가 좁아짐' 단계는 뺐습니다 — 같은 시각에 두 단계를 한꺼번에 넘김)
-    const at = Array.from({ length: total }, (_, i) => 1500 + i * 650);
-    const last = at[at.length - 1];
-    at.push(last + 1000, last + 1000, last + 4000);
-    // 화면에 실제로 보이는 동안만 시간을 셉니다 — 공유 링크가 뒤에서 미리 불러와질 때 혼자 끝나 버리지 않도록
-    // (requestAnimationFrame 은 안 보이는 창 · 프레임에서 멈추고, 인트로 무대가 화면에 반 이상 보일 때만 셈)
-    let visible = false;
-    const io = 'IntersectionObserver' in window
-      ? new IntersectionObserver(([en]) => { visible = en.intersectionRatio >= 0.5; }, { threshold: [0, 0.5] })
-      : null;
-    // 섹션 전체(화면 2.6개 높이)가 아니라 화면에 고정된 무대를 봅니다
-    const stage = ref.current?.querySelector('.intro__stage');
-    if (io && stage) io.observe(stage);
-    else visible = true;
-    let elapsed = 0;
-    let prev = 0;
-    let raf = 0;
-    const tick = (now: number) => {
-      const dt = prev ? Math.min(100, now - prev) : 0;
-      prev = now;
-      if (visible && document.visibilityState === 'visible') elapsed += dt;
-      const n = at.filter((ms) => elapsed >= ms).length;
-      if (n) setAuto((cur) => Math.max(cur, n));
-      if (n < at.length) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(raf);
-      io?.disconnect();
-    };
-  }, [reduced, total, run]);
+  // 0: 질문만, 1 ~ total: 나온 단어 수, total + 2: 전환 문구, REVEAL: 문제 정의
+  const [step, setStep] = useState(0);
 
   useEffect(() => {
     if (reduced) return;
     let raf = 0;
-    let wentDown = false;
     const update = () => {
       raf = 0;
       const el = ref.current;
@@ -125,19 +95,7 @@ function Intro() {
       const range = el.offsetHeight - window.innerHeight;
       const p = range > 0 ? Math.min(1, Math.max(0, -el.getBoundingClientRect().top / range)) : 1;
       el.style.setProperty('--p', p.toFixed(3));
-      // 스크롤한 화면 수 기준 — 0.04 화면만 내려도 문제 정의 (문제 정의 화면은 약 0.3화면 머문 뒤 다음 섹션으로)
-      // 자동 진행이 끝나기 전에 내려가 버려도, 돌아오면 문제 정의가 열린 상태입니다
-      const s = p * range / window.innerHeight;
-      const reveal = s >= 0.04;
-      setRevealByScroll(reveal);
-      if (reveal) {
-        setAuto(REVEAL);
-        wentDown = true;
-      } else if (wentDown && s < 0.05 && !seenRef.current) {
-        wentDown = false;
-        setAuto(0);
-        setRun((r) => r + 1);
-      }
+      setStep(stepAt(p * range / window.innerHeight, total));
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -152,7 +110,6 @@ function Intro() {
     };
   }, [reduced, total]);
 
-  const step = revealByScroll ? REVEAL : auto;
   const shown = reduced ? REVEAL : step;
   const revealed = !reduced && step >= REVEAL;
   const phase = reduced ? 'static'
@@ -162,50 +119,9 @@ function Intro() {
     : step === total + 1 ? 'iris'
     : step === total + 2 ? 'turn' : 'reveal';
 
-  // 문제 정의(PROBLEM)가 열리기 전까지는 스크롤을 막습니다 — 휠 · 터치 · 키보드만 막고,
-  // 메뉴 · 버튼으로 이동하는 스크롤은 그대로 둡니다 (메뉴 안 스크롤도 그대로)
-  // 혹시 시간이 멈춰도(창이 가려졌다 돌아오는 등) 갇히지 않게 15초 뒤에는 풀어 줍니다
-  const [lockTimedOut, setLockTimedOut] = useState(false);
-  const locked = !reduced && !revealed && !lockTimedOut;
-  useEffect(() => {
-    setLockTimedOut(false);
-    const t = window.setTimeout(() => setLockTimedOut(true), 15000);
-    return () => window.clearTimeout(t);
-  }, [run]);
-  useEffect(() => {
-    if (!locked) return;
-    const KEYS = new Set([' ', 'PageDown', 'PageUp', 'ArrowDown', 'ArrowUp', 'End', 'Home']);
-    const inMenu = (t: EventTarget | null) => t instanceof Element && !!t.closest('.menu');
-    const block = (e: Event) => {
-      if (!inMenu(e.target)) e.preventDefault();
-    };
-    const onKey = (e: KeyboardEvent) => {
-      const t = e.target as HTMLElement | null;
-      if (!KEYS.has(e.key) || inMenu(t) || t?.closest('input, textarea, select, [contenteditable]')) return;
-      // 버튼 위 스페이스는 누르기 동작이라 그대로 둠
-      if (e.key === ' ' && t?.closest('button')) return;
-      e.preventDefault();
-    };
-    window.addEventListener('wheel', block, { passive: false });
-    window.addEventListener('touchmove', block, { passive: false });
-    window.addEventListener('keydown', onKey);
-    return () => {
-      window.removeEventListener('wheel', block);
-      window.removeEventListener('touchmove', block);
-      window.removeEventListener('keydown', onKey);
-    };
-  }, [locked]);
-
   // 밝은 문제 정의 화면이 열리면 상단 바 글자색도 다시 맞춥니다.
   useEffect(() => {
     window.dispatchEvent(new Event('scroll'));
-  }, [revealed]);
-
-  // 한 번 끝까지 보면 이번 방문 동안은 다시 재생하지 않음
-  useEffect(() => {
-    if (!revealed) return;
-    introPlayed = true;
-    seenRef.current = true;
   }, [revealed]);
 
   return (
@@ -233,7 +149,9 @@ function Intro() {
           ))}
         </p>
 
+        {/* 스크롤해야 진행된다는 안내 — 첫 화면에서 바로 보이게 글자와 함께 */}
         <p className="intro__hint" aria-hidden="true">
+          <span>SCROLL</span>
           <i />
         </p>
 
