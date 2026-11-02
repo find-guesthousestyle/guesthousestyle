@@ -6,8 +6,7 @@ import type { ContentPack } from './types';
 
 export const ZH: ContentPack = {
   site: {
-    brand: '济州日志',
-    brandEn: 'JEJULOG',
+    brand: 'Find Your Guesthouse Style',
     issue: 'VOL. 01 — JEJU GUESTHOUSE',
     description: '原以为济州的民宿只有派对。编辑们亲自入住，找到了九种体验，以及适合你的那一间。',
 

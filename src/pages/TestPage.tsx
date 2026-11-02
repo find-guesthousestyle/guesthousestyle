@@ -200,7 +200,7 @@ function Result({ result, shared, onRetry, focusRef }: { result: QuizResult; sha
       rank: 'BEST 1',
       place: programById[id].report.place.name,
       oneLine: programById[id].report.oneLine,
-      brand: `${site.brandEn} · ${site.brand}`,
+      brand: site.brand,
     });
     return new File([blob], `jejulog-${result.code}.png`, { type: 'image/png' });
   };

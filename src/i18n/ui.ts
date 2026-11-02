@@ -54,7 +54,7 @@ export interface UiText {
 
 export const UI: Record<Lang, UiText> = {
   ko: {
-    docTitle: 'STAY JEJULOG — 문 너머, 우리가 몰랐던 게스트하우스',
+    docTitle: 'Find Your Guesthouse Style — 문 너머, 우리가 몰랐던 게스트하우스',
     langLabel: '언어',
     skip: '본문 바로가기',
     nav: { main: '메인', house: '게하 탐색', test: '취향 테스트', map: '지도', more: '인스타그램', menuOpen: '메뉴 열기', menuClose: '메뉴 닫기', menu: '메뉴', mainNav: '주요 메뉴', toHome: (b) => `${b} 메인으로` },
@@ -81,7 +81,7 @@ export const UI: Record<Lang, UiText> = {
       wordsAria: '게스트하우스 하면 흔히 떠올리는 것들',
       opening: '들어가는 중 — 바로 입장',
       findSub: (n) => `${n}가지 질문으로 찾는 나의 제주 게스트하우스`,
-      moreTitle: '제주 게스트하우스의\n더 많은 이야기', moreSub: '궁금한 문구를 눌러 숨은 이야기를 펼쳐 보세요.', moreCta: '인스타그램에서 더 보기', testShareTitle: '테스트 공유하기', testShareKakao: '카카오톡으로 공유', testShareX: 'X로 공유', testShareLink: '링크 복사', testShareCopied: '테스트 링크를 복사했어요. 원하는 곳에 붙여 넣어 공유해 보세요.', testShareKakaoCopied: '테스트 링크를 복사했어요. 카카오톡 대화창에 붙여 넣어 주세요.', testShareFailed: '공유하지 못했어요. 다시 한 번 눌러 주세요.', testShareXText: '나에게 맞는 제주 게스트하우스는 어디일까? 스테이 제주로그 취향 테스트',
+      moreTitle: '제주 게스트하우스의\n더 많은 이야기', moreSub: '궁금한 문구를 눌러 숨은 이야기를 펼쳐 보세요.', moreCta: '인스타그램에서 더 보기', testShareTitle: '테스트 공유하기', testShareKakao: '카카오톡으로 공유', testShareX: 'X로 공유', testShareLink: '링크 복사', testShareCopied: '테스트 링크를 복사했어요. 원하는 곳에 붙여 넣어 공유해 보세요.', testShareKakaoCopied: '테스트 링크를 복사했어요. 카카오톡 대화창에 붙여 넣어 주세요.', testShareFailed: '공유하지 못했어요. 다시 한 번 눌러 주세요.', testShareXText: '나에게 맞는 제주 게스트하우스는 어디일까? Find Your Guesthouse Style 취향 테스트',
       typesAria: '네 가지 여행 취향',
     },
     house: {
@@ -115,7 +115,7 @@ export const UI: Record<Lang, UiText> = {
       save: '저장하기', saved: '결과 이미지를 저장했습니다.', saveFailed: '이미지를 저장하지 못했습니다. 화면을 캡처해 주세요.',
       shared: '공유 창을 열었습니다.', copied: '결과 링크를 복사했습니다.', canceled: '공유를 취소했습니다.',
       shareTitle: '내 결과 공유하기', shareKakao: '카카오톡으로 공유',
-      kakaoCopied: '결과 링크를 복사했습니다. 카카오톡 대화창에 붙여 넣어 주세요.', linkCopied: '결과 링크를 복사했어요. 원하는 곳에 붙여 넣어 공유해 보세요.', shareLink: '링크 복사', shareX: 'X로 공유', xText: (title) => `나의 제주 게스트하우스 취향은 "${title}"! 스테이 제주로그 취향 테스트`, shareFailed: '공유하지 못했습니다. 다시 눌러 주세요.',
+      kakaoCopied: '결과 링크를 복사했습니다. 카카오톡 대화창에 붙여 넣어 주세요.', linkCopied: '결과 링크를 복사했어요. 원하는 곳에 붙여 넣어 공유해 보세요.', shareLink: '링크 복사', shareX: 'X로 공유', xText: (title) => `나의 제주 게스트하우스 취향은 "${title}"! Find Your Guesthouse Style 취향 테스트`, shareFailed: '공유하지 못했습니다. 다시 눌러 주세요.',
       bestReason: (t) => `‘${t}’ 취향에서 가장 높은 점수를 받은 곳.`,
       nextRunnerUp: (t) => `두 번째로 높게 나온 ‘${t}’ 성향에 어울리는 곳.`,
       nextSameType: (t) => `같은 ‘${t}’ 취향에서 함께 고른 곳.`,
@@ -123,7 +123,7 @@ export const UI: Record<Lang, UiText> = {
   },
 
   en: {
-    docTitle: 'STAY JEJULOG — Beyond the door, the guesthouses we never knew',
+    docTitle: 'Find Your Guesthouse Style — Beyond the door, the guesthouses we never knew',
     langLabel: 'Language',
     skip: 'Skip to content',
     nav: { main: 'Home', house: 'Explore', test: 'Taste Test', map: 'Map', more: 'Instagram', menuOpen: 'Open menu', menuClose: 'Close menu', menu: 'Menu', mainNav: 'Main menu', toHome: (b) => `${b} home` },
@@ -150,7 +150,7 @@ export const UI: Record<Lang, UiText> = {
       wordsAria: 'What people usually picture when they hear “guesthouse”',
       opening: 'Opening — go straight in',
       findSub: (n) => `Find your Jeju guesthouse in ${n} questions`,
-      moreTitle: 'More stories from Jeju guesthouses', moreSub: 'Tap a headline that catches your eye to unfold its hidden story.', moreCta: 'See more on Instagram', testShareTitle: 'Share the test', testShareKakao: 'Share on KakaoTalk', testShareX: 'Share on X', testShareLink: 'Copy link', testShareCopied: 'Test link copied. Paste it anywhere to share.', testShareKakaoCopied: 'Test link copied. Paste it into a KakaoTalk chat.', testShareFailed: 'Couldn’t share. Please try again.', testShareXText: 'Which Jeju guesthouse suits you? STAY JEJULOG taste test',
+      moreTitle: 'More stories from Jeju guesthouses', moreSub: 'Tap a headline that catches your eye to unfold its hidden story.', moreCta: 'See more on Instagram', testShareTitle: 'Share the test', testShareKakao: 'Share on KakaoTalk', testShareX: 'Share on X', testShareLink: 'Copy link', testShareCopied: 'Test link copied. Paste it anywhere to share.', testShareKakaoCopied: 'Test link copied. Paste it into a KakaoTalk chat.', testShareFailed: 'Couldn’t share. Please try again.', testShareXText: 'Which Jeju guesthouse suits you? Find Your Guesthouse Style taste test',
       typesAria: 'Four travel tastes',
     },
     house: {
@@ -184,7 +184,7 @@ export const UI: Record<Lang, UiText> = {
       save: 'Save', saved: 'Result image saved.', saveFailed: 'Couldn’t save the image. Please take a screenshot instead.',
       shared: 'Opened the share sheet.', copied: 'Result link copied.', canceled: 'Sharing canceled.',
       shareTitle: 'Share my result', shareKakao: 'Share on KakaoTalk',
-      kakaoCopied: 'Result link copied. Paste it into a KakaoTalk chat.', linkCopied: 'Result link copied. Paste it anywhere to share.', shareLink: 'Copy link', shareX: 'Share on X', xText: (title) => `My Jeju guesthouse type: "${title}"! STAY JEJULOG taste test`, shareFailed: 'Couldn’t share. Please try again.',
+      kakaoCopied: 'Result link copied. Paste it into a KakaoTalk chat.', linkCopied: 'Result link copied. Paste it anywhere to share.', shareLink: 'Copy link', shareX: 'Share on X', xText: (title) => `My Jeju guesthouse type: "${title}"! Find Your Guesthouse Style taste test`, shareFailed: 'Couldn’t share. Please try again.',
       bestReason: (t) => `The top match for “${t}”.`,
       nextRunnerUp: (t) => `A fit for your second-strongest side, “${t}”.`,
       nextSameType: (t) => `Another pick for “${t}”.`,
@@ -192,7 +192,7 @@ export const UI: Record<Lang, UiText> = {
   },
 
   zh: {
-    docTitle: 'STAY JEJULOG — 门的那边，我们不曾了解的民宿',
+    docTitle: 'Find Your Guesthouse Style — 门的那边，我们不曾了解的民宿',
     langLabel: '语言',
     skip: '跳到正文',
     nav: { main: '首页', house: '探索民宿', test: '喜好测试', map: '地图', more: 'Instagram', menuOpen: '打开菜单', menuClose: '关闭菜单', menu: '菜单', mainNav: '主菜单', toHome: (b) => `返回${b}首页` },
@@ -219,7 +219,7 @@ export const UI: Record<Lang, UiText> = {
       wordsAria: '提起民宿，人们常会想到的事',
       opening: '正在开门 — 直接进入',
       findSub: (n) => `用${n}个问题找到我的济州民宿`,
-      moreTitle: '济州民宿的更多故事', moreSub: '点开感兴趣的标题，看看藏在里面的故事吧。', moreCta: '在 Instagram 查看更多', testShareTitle: '分享测试', testShareKakao: '分享到 KakaoTalk', testShareX: '分享到 X', testShareLink: '复制链接', testShareCopied: '已复制测试链接，粘贴到任意地方即可分享。', testShareKakaoCopied: '已复制测试链接，请粘贴到 KakaoTalk 聊天中。', testShareFailed: '分享失败，请再试一次。', testShareXText: '哪家济州民宿最适合你？STAY JEJULOG 喜好测试',
+      moreTitle: '济州民宿的更多故事', moreSub: '点开感兴趣的标题，看看藏在里面的故事吧。', moreCta: '在 Instagram 查看更多', testShareTitle: '分享测试', testShareKakao: '分享到 KakaoTalk', testShareX: '分享到 X', testShareLink: '复制链接', testShareCopied: '已复制测试链接，粘贴到任意地方即可分享。', testShareKakaoCopied: '已复制测试链接，请粘贴到 KakaoTalk 聊天中。', testShareFailed: '分享失败，请再试一次。', testShareXText: '哪家济州民宿最适合你？Find Your Guesthouse Style 喜好测试',
       typesAria: '四种旅行喜好',
     },
     house: {
@@ -253,7 +253,7 @@ export const UI: Record<Lang, UiText> = {
       save: '保存', saved: '已保存结果图片。', saveFailed: '无法保存图片，请截屏保存。',
       shared: '已打开分享窗口。', copied: '已复制结果链接。', canceled: '已取消分享。',
       shareTitle: '分享我的结果', shareKakao: '分享到 KakaoTalk',
-      kakaoCopied: '已复制结果链接，请粘贴到 KakaoTalk 聊天中。', linkCopied: '已复制结果链接，粘贴到任意地方即可分享。', shareLink: '复制链接', shareX: '分享到 X', xText: (title) => `我的济州民宿喜好是“${title}”！STAY JEJULOG 喜好测试`, shareFailed: '分享失败，请再试一次。',
+      kakaoCopied: '已复制结果链接，请粘贴到 KakaoTalk 聊天中。', linkCopied: '已复制结果链接，粘贴到任意地方即可分享。', shareLink: '复制链接', shareX: '分享到 X', xText: (title) => `我的济州民宿喜好是“${title}”！Find Your Guesthouse Style 喜好测试`, shareFailed: '分享失败，请再试一次。',
       bestReason: (t) => `在“${t}”喜好中得分最高的地方。`,
       nextRunnerUp: (t) => `适合你第二强的“${t}”倾向。`,
       nextSameType: (t) => `同为“${t}”喜好的另一个选择。`,

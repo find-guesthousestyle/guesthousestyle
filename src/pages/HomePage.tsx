@@ -39,7 +39,7 @@ export function HomePage() {
   const { site: SITE, ui } = useContent();
   return (
     <>
-      <h1 className="visually-hidden">{SITE.brand} {SITE.brandEn} — {ui.home.srTitle}</h1>
+      <h1 className="visually-hidden">{SITE.brand} — {ui.home.srTitle}</h1>
       <Intro />
       {/* 대문(체크인 · 체크아웃) 대신 집 내부를 메인에서 바로 둘러봅니다 */}
       <HousePage embedded />

@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 
-const SITE_URL = 'https://lxwebzine.hankyung.com/2026-1/team4/';
+const SITE_URL = 'https://seongmin9584.github.io/stay.jejulog/';
 
 /**
  * 취향 테스트를 # 이 아닌 따로 된 주소(…/team4/test/)로 — 빌드가 끝나면 index.html 을 test/index.html 로 한 벌 더 둡니다.
@@ -24,7 +24,7 @@ function testPage(): Plugin {
         .replace(/<script>[^<]*createElement\('base'\)[^<]*<\/script>/, '<base href="../" />')
         .replace(`<link rel="canonical" href="${SITE_URL}" />`, `<link rel="canonical" href="${SITE_URL}test/" />`)
         .replace(`<meta property="og:url" content="${SITE_URL}" />`, `<meta property="og:url" content="${SITE_URL}test/" />`)
-        .replace(/<title>[^<]*<\/title>/, '<title>취향 테스트 | STAY JEJULOG</title>');
+        .replace(/<title>[^<]*<\/title>/, '<title>취향 테스트 | Find Your Guesthouse Style</title>');
       mkdirSync(resolve(outDir, 'test'), { recursive: true });
       writeFileSync(resolve(outDir, 'test/index.html'), html);
     },

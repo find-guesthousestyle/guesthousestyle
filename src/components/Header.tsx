@@ -19,7 +19,7 @@ export function Header({ route }: { route: Route }) {
   const [tone, setTone] = useState<'dark' | 'light'>('light');
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const { site, ui, lang } = useContent();
+  const { site, ui } = useContent();
 
   // 페이지가 바뀌면 메뉴를 닫습니다 (뒤로 가기 등 메뉴 밖에서 이동한 경우 포함).
   useEffect(() => setOpen(false), [route]);
@@ -62,7 +62,7 @@ export function Header({ route }: { route: Route }) {
       <header className={`topbar topbar--${tone}${scrolled ? ' is-scrolled' : ''}`}>
         <a className="topbar__brand" href={href.home()} onClick={toTop} data-track="gnb_logo" aria-label={ui.nav.toHome(site.brand)}>
           <Logo />
-          {lang !== 'en' && <span className="topbar__ko">{site.brand}</span>}
+          <span className="topbar__ko">{site.brand}</span>
         </a>
         <nav className="topbar__nav" aria-label={ui.nav.mainNav}>
           <a className="topbar__link" href={href.house()} data-track="gnb_house" aria-current={route.name === 'house' ? 'page' : undefined}>

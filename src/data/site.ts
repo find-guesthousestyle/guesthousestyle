@@ -7,8 +7,7 @@
 export const INSTAGRAM_URL = 'https://www.instagram.com/stay.jejulog?cplk=YmVraTQ2YWU1b2hh&utm_source=qr';
 
 export const SITE = {
-  brand: '스테이 제주로그',
-  brandEn: 'JEJULOG',
+  brand: 'Find Your Guesthouse Style',
   issue: 'VOL. 01 — JEJU GUESTHOUSE',
   description: '파티만 있는 줄 알았던 제주 게스트하우스. 에디터가 직접 머물며 찾은 아홉 가지 경험과 나에게 맞는 숙소.',
 

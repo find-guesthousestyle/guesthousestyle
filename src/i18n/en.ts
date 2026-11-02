@@ -8,8 +8,7 @@ import type { ContentPack } from './types';
 export const EN: ContentPack = {
   /* ---------------------------------------------------------------- site */
   site: {
-    brand: 'Jejulog',
-    brandEn: 'JEJULOG',
+    brand: 'Find Your Guesthouse Style',
     issue: 'VOL. 01 — JEJU GUESTHOUSE',
     description:
       'Jeju guesthouses, we thought, were all about parties. Here are nine experiences our editors found by staying in person — and the stay that suits you.',

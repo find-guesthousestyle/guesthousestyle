@@ -12,7 +12,6 @@ export type Lang = 'ko' | 'en' | 'zh';
 /** src/data/site.ts 의 SITE 와 같은 모양 (글만) */
 export interface SiteText {
   brand: string;
-  brandEn: string;
   issue: string;
   description: string;
   intro: { slug: string; time: string; question: string; words: string[]; turn: string };
