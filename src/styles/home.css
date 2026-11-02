@@ -10,7 +10,7 @@
   --cream: #F6F3ED;
   --mono: var(--f-sans);
   --p: 0;
-  position: relative; height: 320vh; /* 스크롤 단계(HomePage.tsx stepAt · spreadAt) — 문제 정의 1.41화면 + 사진 펼침 0.6화면 + 머무는 0.2화면 + 고정 무대 한 화면 */
+  position: relative; height: 360vh; /* 스크롤 단계(HomePage.tsx stepAt · fanAt · isoAt) — 문제 정의 1.41화면 + 사진 펼침 · 눕힘 1.0화면 + 머무는 0.2화면 + 고정 무대 한 화면 */
   background: var(--night); color: var(--cream);
 }
 .intro__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
@@ -141,6 +141,10 @@
 .intro[data-phase="reveal"] .problem__points { transition-delay: .75s; }
 .intro[data-phase="reveal"] .problem__head, .intro[data-phase="reveal"] .problem__inner > .strip { transition-delay: .55s; } /* 제목 · 사진 · 문장이 한꺼번에 */
 .intro[data-phase="reveal"] .problem__answer { transition-delay: .55s; }
+/* 사진이 입체 무대로 서 있는 동안(--iso 1)은 제목 · 문장을 숨기고 사진을 화면 가운데쯤으로 내려 둡니다 — 누우면서 제자리로
+   (--iso 는 인트로가 스크롤에 맞춰 넣음 · 값이 없으면 0 = 동작 줄이기 설정에서는 처음부터 원래 모습) */
+.intro[data-phase="reveal"] .problem__inner > :not(.strip) { opacity: calc(1 - var(--iso, 0) * 1.6); transform: translateY(calc(18px * var(--iso, 0))); transition: opacity .3s var(--ease-out), transform .3s var(--ease-out); }
+.intro[data-phase="reveal"] .problem__inner > .strip { transform: translateY(calc(var(--iso, 0) * 14vh)); transition: opacity .7s var(--ease-out) .2s; }
 .problem__head { display: grid; gap: 14px; align-content: start; }
 .problem__title { font-family: var(--f-home); font-size: clamp(27px, 3.8vw, 46px); font-weight: 700; line-height: 1.32; letter-spacing: -0.025em; } /* 메인 검정 큰 제목은 모두 같은 크기 · 두께 (section-head__title 과 같게) */
 .problem__title span { display: block; }
@@ -168,15 +172,26 @@
 /* 사진 띠 — 세로 사진이 조금씩 겹쳐 화면 양 끝까지, 오른쪽에서 밀려 들어온 뒤 계속 왼쪽으로 흘러감 */
 .problem__inner:has(.strip) { padding-bottom: clamp(100px, 16vh, 160px); gap: clamp(18px, 3vh, 32px); } /* 아래 SCROLL 과 넉넉히 */
 .strip { margin-inline: calc(50% - 50vw); height: clamp(130px, 31vh, 340px); padding-block: 10px; overflow: hidden; } /* 위아래 여백 — 기운 모서리가 잘리지 않게 */
+/* 입체 무대 — 대각선으로 펼친 사진이 띠 위아래로 넘쳐도 보이게 (옆으로만 자름) · 대각선 한 칸 간격 */
+/* (min-width: 0 — clip 은 hidden 과 달리 긴 띠 너비만큼 칸을 늘리므로) */
+.intro .strip { overflow-x: clip; overflow-y: visible; min-width: 0; --gx: clamp(14px, 4.6vw, 62px); --gy: calc(var(--gx) * .5); }
 .strip__track { display: flex; align-items: center; width: max-content; height: 100%; animation: strip-flow 16s linear infinite; } /* 천천히 흘러감 */
 .strip__item { flex: none; aspect-ratio: 3 / 4; margin-left: clamp(-22px, -1.5vw, -10px); overflow: hidden; background: #F1E3D8; box-shadow: 0 2px 8px rgba(40, 30, 20, .1); opacity: .92; transform: translateY(var(--y, 0)) rotate(var(--r, 0deg)); } /* 살짝 비치게 — 겹친 사진이 은은하게 */
-/* 스크롤로 펼치기 — --spread 0 이면 화면 가운데(--dx 만큼 이동)에 기울어진 채(--pr) 겹쳐 있고, 1 이면 원래 줄
-   (--spread 는 인트로가 스크롤에 맞춰 넣음 · 값이 없으면 1 = 동작 줄이기 설정에서는 처음부터 펼친 모습) */
+/* 스크롤로 펼치기 — 레퍼런스처럼 사진이 비스듬히 선 입체(아이소메트릭) 모습으로
+   --iso 1: 화면 가운데(--dx)에서 대각선 자리(--kc)로 선 사진들 · 0: 원래 띠 (사이는 서서히 누움)
+   --fan 0: 한 벌로 포개짐 · 1: 대각선으로 다 펼쳐짐 — 왼쪽 아래가 맨 앞, 오른쪽 위로 갈수록 뒤라 옅어짐(--kf)
+   --hide 1: 이번 무대에 세우지 않은 사진 (서 있는 동안 숨김) */
 .intro .strip__item {
   transform:
-    translate(calc(var(--dx, 0px) * (1 - var(--spread, 1))), calc(var(--y, 0%) * var(--spread, 1)))
-    rotate(calc(var(--r, 0deg) * var(--spread, 1) + var(--pr, 0deg) * (1 - var(--spread, 1))))
-    scale(calc(.9 + .1 * var(--spread, 1)));
+    translate(
+      calc((var(--dx, 0px) + var(--kc, 0) * var(--gx) * var(--fan, 1)) * var(--iso, 0)),
+      calc(var(--y, 0%) * (1 - var(--iso, 0)) - var(--kc, 0) * var(--gy) * var(--fan, 1) * var(--iso, 0))
+    )
+    rotate(calc(var(--r, 0deg) * (1 - var(--iso, 0))))
+    skewY(calc(26deg * var(--iso, 0)))
+    scaleX(calc(1 - .28 * var(--iso, 0)));
+  opacity: calc(.92 * (1 - var(--hide, 0) * var(--iso, 0)) * (1 - .6 * var(--kf, 0) * var(--fan, 1) * var(--iso, 0)));
+  box-shadow: 0 2px 8px rgba(40, 30, 20, .1), calc(-6px * var(--iso, 0)) calc(8px * var(--iso, 0)) calc(18px * var(--iso, 0)) rgba(40, 30, 20, calc(.18 * var(--iso, 0)));
 }
 .strip__item:nth-child(odd) { z-index: 1; }
 .strip__item img { display: block; width: 100%; height: 100%; object-fit: cover; }
