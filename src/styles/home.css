@@ -10,7 +10,7 @@
   --cream: #F6F3ED;
   --mono: var(--f-sans);
   --p: 0;
-  position: relative; height: 360vh; /* 스크롤 단계(HomePage.tsx stepAt · fanAt · isoAt) — 문제 정의 1.41화면 + 사진 펼침 · 눕힘 1.0화면 + 머무는 0.2화면 + 고정 무대 한 화면 */
+  position: relative; height: 385vh; /* 스크롤 단계(HomePage.tsx stepAt · fanAt · isoAt) — 문제 정의 1.66화면 + 사진 펼침 · 눕힘 1.0화면 + 머무는 0.2화면 + 고정 무대 한 화면 */
   background: var(--night); color: var(--cream);
 }
 .intro__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
@@ -456,7 +456,8 @@
 .intro__turn > .intro__turn-end { font-size: 1.75em; line-height: 1.15; margin-top: .3em; color: #D46A1F; }
 /* '당신이 알고 있는 ‘제주 게스트하우스’'가 먼저 뜨고, 잠시 뒤 '전부가 아닙니다.' */
 .intro__turn-end { opacity: 0; transform: translateY(12px); transition: opacity .7s var(--ease), transform .7s var(--ease-out); }
-.intro[data-phase="turn"] .intro__turn-end { opacity: 1; transform: none; transition-delay: .85s; }
+/* 끝 줄은 시간 대신 스크롤로 — 두 줄이 나온 뒤 조금 더 내리면 (HomePage.tsx turnEndAt) */
+.intro[data-phase="turn"][data-turn-end] .intro__turn-end { opacity: 1; transform: none; }
 .intro--static .intro__turn-end { opacity: 1; transform: none; }
 /* 휴대폰 — 375px 폭 기준 앞 두 줄 25 · 끝 줄 38px */
 @media (max-width: 639px) {

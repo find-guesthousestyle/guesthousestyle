@@ -61,17 +61,19 @@ export function HomePage() {
 const REVEAL = SITE_KO.intro.words.length + 3;
 /**
  * 스크롤한 화면 수(s)마다 한 단계씩 — 첫 단어 0.15화면, 단어 사이 0.22화면,
- * 마지막 단어 0.25화면 뒤 전환 문구, 다시 0.35화면 뒤 문제 정의. 위로 올리면 거꾸로 돌아갑니다.
+ * 마지막 단어 0.25화면 뒤 전환 문구 두 줄, 0.25화면 더 내리면 끝 줄 '전부가 아닙니다.'(turnEndAt),
+ * 다시 0.35화면 뒤 문제 정의. 위로 올리면 거꾸로 돌아갑니다.
  * (예전에는 시간에 맞춰 저절로 진행하며 그동안 스크롤을 막았는데, 여기서 이탈이 많아 스크롤로 바꿈)
  * 문제 정의가 열리면 사진이 한 벌로 포개진 채 비스듬히 선 모습(입체)으로 나타나
  * 0.05 ~ 0.45화면 동안 대각선으로 쫙 펼쳐지고(fanAt), 0.6 ~ 1.0화면 동안 바로 누워 원래 사진 띠가 됩니다(isoAt).
  * 다 누우면 띠가 흐르기 시작하고, 제목 · 문장도 그때 떠오릅니다.
- * 단어 4개 기준 문제 정의 1.41화면 + 사진 1.0화면 — 섹션 높이(home.css .intro, 360vh)가 여기에 맞춰져 있습니다.
+ * 단어 4개 기준 문제 정의 1.66화면 + 사진 1.0화면 — 섹션 높이(home.css .intro, 385vh)가 여기에 맞춰져 있습니다.
  */
 const WORD_AT = 0.15;
 const WORD_GAP = 0.22;
 const TURN_GAP = 0.25;
-const REVEAL_GAP = 0.35;
+const TURN_END_GAP = 0.25;
+const REVEAL_GAP = TURN_END_GAP + 0.35;
 const FAN = [0.05, 0.45];
 const FLATTEN = [0.6, 1.0];
 /** 사진 대각선 무대에 세우는 장 수 — 화면 가운데에 보이는 것만 */
@@ -85,6 +87,8 @@ function stepAt(s: number, total: number) {
   if (s >= turnAt) return total + 2;
   return s < WORD_AT ? 0 : Math.min(total, Math.floor((s - WORD_AT) / WORD_GAP) + 1);
 }
+/** 전환 문구 끝 줄('전부가 아닙니다.')이 나올 만큼 내렸는지 */
+const turnEndAt = (s: number, total: number) => s >= revealAt(total) - REVEAL_GAP + TURN_END_GAP;
 /** 0 = 한 벌로 포개짐, 1 = 대각선으로 다 펼쳐짐 */
 const fanAt = (s: number, total: number) => ramp(s - revealAt(total), FAN);
 /** 1 = 비스듬히 선 입체 무대, 0 = 바로 누운 사진 띠 (문제 정의 전에는 1) */
@@ -124,6 +128,7 @@ function Intro() {
   const total = SITE.intro.words.length;
   // 0: 질문만, 1 ~ total: 나온 단어 수, total + 2: 전환 문구, REVEAL: 문제 정의
   const [step, setStep] = useState(0);
+  const [turnEnd, setTurnEnd] = useState(false);
 
   useEffect(() => {
     if (reduced) return;
@@ -139,6 +144,7 @@ function Intro() {
       el.style.setProperty('--p', p.toFixed(3));
       const s = p * range / window.innerHeight;
       setStep(stepAt(s, total));
+      setTurnEnd(turnEndAt(s, total));
       const iso = isoAt(s, total);
       const track = el.querySelector<HTMLElement>('.strip__track');
       if (track) {
@@ -187,7 +193,7 @@ function Intro() {
   }, [revealed]);
 
   return (
-    <section ref={ref} id="intro" className={`intro${reduced ? ' intro--static' : ''}`} data-step={Math.min(shown, total)} data-phase={phase} data-tone={revealed ? 'light' : 'dark'} aria-labelledby="intro-title">
+    <section ref={ref} id="intro" className={`intro${reduced ? ' intro--static' : ''}`} data-step={Math.min(shown, total)} data-phase={phase} data-turn-end={turnEnd || undefined} data-tone={revealed ? 'light' : 'dark'} aria-labelledby="intro-title">
       {/* 메뉴 '메인'이 오는 자리 — 인트로를 끝까지 내린 곳, CHECK IN 화면이 다 열린 상태 */}
       {!reduced && <span id="checkin" className="intro__anchor" />}
       <div className="intro__stage">
